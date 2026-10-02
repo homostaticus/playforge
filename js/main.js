@@ -1,22 +1,27 @@
 /* ------------------------------------------------------------------
    PLAYFORGE – site data + behaviour
-   Add a game to GAMES and it shows up in "The games".
-   Add a stream to LOG and it shows up in the sketchbook.
+   Add a game to GAMES and it shows up in the library.
+   Add a stream to LOG and it shows up in the patch notes.
 ------------------------------------------------------------------- */
 
-// status:   "sketch" = in progress, "playable" = finished enough to play
+// status:   "dev" = still being built, "playable" = finished enough to play
 // progress: 0–100, how finished the game is
-// pigment:  the watercolor behind the card: "cobalt", "madder", "cadmium" or "viridian"
+// accent:   the game's neon colour; lights up its card and cover
+// cover:    16:10 cover art. Leave it out and a tile is generated from the title.
+// featured: true puts the game in the big slot at the top (defaults to the first game)
 const GAMES = [
   {
-    id: "No. 001",
+    id: "#001",
     title: "Race Car",
     description: "Weave through traffic on a three-lane road. It speeds up the longer you last.",
-    url: "games/race-car/index.html",
-    status: "sketch",
+    url: "https://homostaticus.github.io/race-car/",
+    cover: "games/race-car/cover.svg",
+    genre: "Arcade",
+    status: "dev",
     progress: 20,
-    pigment: "madder",
+    accent: "#ff3d81",
     stack: "Canvas · JS",
+    featured: true,
   },
 ];
 
@@ -24,7 +29,7 @@ const GAMES = [
 const LOG = [
   {
     date: "2026-10-02",
-    title: "First marks on the page.",
+    title: "Player one, ready.",
     detail: "Set up Playforge, the site that will host the games, and started the first one: Race Car.",
     ref: "Stream #1",
   },
@@ -33,51 +38,81 @@ const LOG = [
 // Flip this to true when you go live (or wire it to Kick later).
 const IS_LIVE = false;
 
+const STATUS = { playable: "Playable", dev: "In dev" };
+
 const grid = document.getElementById("game-grid");
+
+function cover(g) {
+  const art = g.cover
+    ? `<img src="${g.cover}" alt="" loading="lazy">`
+    : `<span class="cover-fallback" aria-hidden="true">${g.title[0]}</span>`;
+  return `<div class="cover">${art}</div>`;
+}
+
+function playLabel(g) {
+  return g.status === "playable" ? "▶ Play now" : "▶ Play the preview";
+}
+
+function renderFeatured() {
+  const g = GAMES.find((g) => g.featured) || GAMES[0];
+  if (!g) return;
+  document.getElementById("featured").innerHTML = `
+      <a class="featured" href="${g.url}" style="--accent:${g.accent}">
+        ${cover(g)}
+        <span class="featured-flag">Featured</span>
+        <span class="badge ${g.status}">${STATUS[g.status]}</span>
+        <div class="featured-info">
+          <div>
+            <h2 class="featured-title display">${g.title}</h2>
+            <p class="featured-meta">${g.id} · ${g.genre} · ${g.progress}% built</p>
+          </div>
+          <span class="btn btn-primary">${playLabel(g)}</span>
+        </div>
+      </a>`;
+}
 
 function renderGames(filter) {
   const list = filter === "all" ? GAMES : GAMES.filter((g) => g.status === filter);
 
   if (list.length === 0 && filter !== "all") {
-    const what = filter === "playable" ? "No playable games yet." : "No sketches right now.";
-    grid.innerHTML = `<div class="card is-empty"><p>${what} Come back after the next stream.</p></div>`;
+    const what = filter === "playable" ? "No playable games yet." : "Nothing in development right now.";
+    grid.innerHTML = `<div class="game is-empty"><p>${what} Come back after the next stream.</p></div>`;
     return;
   }
 
   grid.innerHTML = list
     .map(
       (g) => `
-      <a class="card" href="${g.url}" style="--progress:${g.progress}%; --pigment:var(--${g.pigment})">
-        <span class="card-wash" aria-hidden="true"></span>
-        <div class="card-top">
-          <span class="mono">${g.id}</span>
-          <span class="tag ${g.status}">${g.status === "playable" ? "Playable" : "Sketch"}</span>
+      <a class="game" href="${g.url}" style="--progress:${g.progress}%; --accent:${g.accent}">
+        ${cover(g)}
+        <span class="badge ${g.status}">${STATUS[g.status]}</span>
+        <span class="game-play" aria-hidden="true"><span>${playLabel(g)}</span></span>
+        <div class="game-body">
+          <div class="game-meta"><span>${g.id}</span><span>${g.genre}</span></div>
+          <h3 class="game-title display">${g.title}</h3>
+          <p class="game-desc">${g.description}</p>
+          <div>
+            <div class="game-bar" aria-hidden="true"><span></span></div>
+            <div class="game-foot" style="margin-top:10px"><span>${g.stack}</span><span>${g.progress}% built</span></div>
+          </div>
         </div>
-        <div>
-          <h3 class="card-title display">${g.title}</h3>
-          <p class="card-desc">${g.description}</p>
-        </div>
-        <div class="card-foot mono">
-          <span>${g.stack}</span>
-          <span class="go">${g.status === "playable" ? "Play →" : "Preview →"}</span>
-        </div>
-        <span class="card-progress" aria-hidden="true"></span>
       </a>`
     )
     .join("") + (filter === "all" ? nextCard() : "");
 }
 
-// A blank page at the end of the list for whatever gets built next.
+// An empty slot at the end of the library for whatever gets built next.
 function nextCard() {
   const n = String(GAMES.length + 1).padStart(3, "0");
   return `
-      <a class="card is-next" href="#stream">
-        <div class="card-top"><span class="mono">No. ${n}</span></div>
-        <div>
-          <h3 class="card-title display">Blank page</h3>
-          <p class="card-desc">The next game hasn't been started. Chat decides what it is.</p>
+      <a class="game is-locked" href="#stream">
+        <div class="cover"><span class="cover-fallback" aria-hidden="true">?</span></div>
+        <div class="game-body">
+          <div class="game-meta"><span>#${n}</span><span>Not started</span></div>
+          <h3 class="game-title display">Empty slot</h3>
+          <p class="game-desc">The next game hasn't been started. Chat decides what it is.</p>
+          <div class="game-foot"><span>Locked</span><span>Have a say →</span></div>
         </div>
-        <div class="card-foot mono"><span>Not started</span><span class="go">Have a say →</span></div>
       </a>`;
 }
 
@@ -90,9 +125,9 @@ function renderLog() {
   document.getElementById("log-list").innerHTML = LOG.map(
     (e) => `
     <li>
-      <time class="mono" datetime="${e.date}">${formatDate(e.date)}</time>
+      <time datetime="${e.date}">${formatDate(e.date)}</time>
       <p class="entry"><strong>${e.title}</strong> <span>${e.detail}</span></p>
-      <span class="ref mono">${e.ref}</span>
+      <span class="ref">${e.ref}</span>
     </li>`
   ).join("");
 }
@@ -102,7 +137,7 @@ function renderStats() {
   document.getElementById("stat-playable").textContent = GAMES.filter((g) => g.status === "playable").length;
   document.getElementById("stat-streams").textContent = LOG.length;
   // Update by hand after each stream: run `cat games/*/*.js | wc -l`
-  document.getElementById("stat-loc").textContent = 228;
+  document.getElementById("stat-loc").textContent = 237;
 }
 
 function renderLive() {
@@ -110,7 +145,8 @@ function renderLive() {
   const status = document.getElementById("live-status");
   status.classList.add("is-live");
   status.querySelector(".status-text").textContent = "Live now";
-  document.querySelector(".frame-text").innerHTML = "LIVE<br><span>building right now</span>";
+  document.querySelector(".screen").classList.add("is-live");
+  document.querySelector(".screen-text").innerHTML = "LIVE<br><span>building right now</span>";
 }
 
 document.querySelectorAll(".filter").forEach((btn) => {
@@ -122,6 +158,7 @@ document.querySelectorAll(".filter").forEach((btn) => {
 });
 
 document.getElementById("year").textContent = new Date().getFullYear();
+renderFeatured();
 renderGames("all");
 renderLog();
 renderStats();

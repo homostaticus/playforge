@@ -3,14 +3,14 @@ const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
 function draw() {
-  ctx.fillStyle = "#ffffff";
+  ctx.fillStyle = "#04050a";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  ctx.fillStyle = "#0a0a0a";
-  ctx.font = "600 72px Fraunces, Georgia, serif";
-  ctx.fillText("Playforge", 40, 110);
+  ctx.fillStyle = "#53fc18";
+  ctx.font = "700 72px 'Chakra Petch', sans-serif";
+  ctx.fillText("PLAYFORGE", 40, 110);
 
-  ctx.fillStyle = "#4b4b4b";
+  ctx.fillStyle = "#8f96b3";
   ctx.font = "16px 'JetBrains Mono', monospace";
   ctx.fillText("Stream #1 · nothing here yet. Watch it get built.", 40, 150);
 }

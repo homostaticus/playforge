@@ -26,8 +26,10 @@ const STEER_SPEED = 380; // px per second
 const START_SPEED = 300;
 const BEST_KEY = "race-car-best";
 
-let state = "ready"; // "ready" | "playing" | "crashed"
-let player, traffic, speed, distance, spawnIn, roadOffset;
+const COUNTDOWN = 3; // seconds before the race starts
+
+let state = "countdown"; // "countdown" | "playing" | "crashed"
+let player, traffic, speed, distance, spawnIn, roadOffset, countdown;
 let best = Number(localStorage.getItem(BEST_KEY)) || 0;
 const keys = { left: false, right: false };
 
@@ -42,7 +44,8 @@ function reset() {
 
 function start() {
   reset();
-  state = "playing";
+  countdown = COUNTDOWN;
+  state = "countdown";
 }
 
 function spawnCar() {
@@ -67,6 +70,11 @@ function hits(a, b) {
 }
 
 function update(dt) {
+  if (state === "countdown") {
+    countdown -= dt;
+    if (countdown <= 0) state = "playing";
+    return;
+  }
   if (state !== "playing") return;
 
   const dir = (keys.right ? 1 : 0) - (keys.left ? 1 : 0);
@@ -169,7 +177,7 @@ function drawMessage(title, line, color) {
   ctx.fillRect(0, H / 2 - 90, W, 160);
   ctx.textAlign = "center";
   ctx.fillStyle = color;
-  ctx.font = "600 56px Fraunces, Georgia, serif";
+  ctx.font = "700 56px 'Chakra Petch', sans-serif";
   ctx.fillText(title, W / 2, H / 2 - 10);
   ctx.fillStyle = PAPER;
   ctx.font = "14px 'JetBrains Mono', monospace";
@@ -182,7 +190,7 @@ function draw() {
   drawCar(player.x, player.y, PLAYER_COLOR);
   drawHud();
 
-  if (state === "ready") drawMessage("Race Car", "Press space or tap to start", LANE_YELLOW);
+  if (state === "countdown") drawMessage(String(Math.ceil(countdown)), "Get ready · steer with ← →", LANE_YELLOW);
   if (state === "crashed") drawMessage("Crashed!", `Score ${score()} · space or tap to retry`, CURB_RED);
 }
 
@@ -200,7 +208,7 @@ window.addEventListener("keydown", (e) => {
   if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") keys.right = true;
   if (e.key === " " || e.key === "Enter") {
     e.preventDefault();
-    if (state !== "playing") start();
+    if (state === "crashed") start();
   }
 });
 
@@ -209,9 +217,9 @@ window.addEventListener("keyup", (e) => {
   if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") keys.right = false;
 });
 
-// Touch / mouse: tap to start, hold the left or right half to steer.
+// Touch / mouse: tap to retry, hold the left or right half to steer.
 canvas.addEventListener("pointerdown", (e) => {
-  if (state !== "playing") return start();
+  if (state === "crashed") return start();
   const rect = canvas.getBoundingClientRect();
   const left = e.clientX - rect.left < rect.width / 2;
   keys.left = left;
@@ -223,6 +231,7 @@ window.addEventListener("pointerup", () => {
   keys.right = false;
 });
 
-reset();
+// The race starts as soon as the page opens.
+start();
 // Wait for the web fonts so the title draws in the right typeface.
 document.fonts.ready.then(() => requestAnimationFrame(frame));

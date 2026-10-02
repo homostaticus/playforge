@@ -5,31 +5,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Playforge</title>
   <meta name="description" content="Browser games built live on Kick. Watch them get made, then play them here.">
+  <meta name="theme-color" content="#080a12">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 2l12 7v14l-12 7-12-7V9z' fill='%23080a12' stroke='%2353fc18' stroke-width='2.5'/%3E%3Cpath d='M13 10.5l9 5.5-9 5.5z' fill='%2353fc18'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..900,0..100;1,9..144,300..900,0..100&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
   <a class="skip" href="#games">Skip to games</a>
 
-  <!-- Watercolor filter: turbulence + displacement gives gradients a wet, bleeding edge -->
-  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
-    <filter id="wash" x="-30%" y="-30%" width="160%" height="160%">
-      <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="3" seed="7" result="noise"/>
-      <feDisplacementMap in="SourceGraphic" in2="noise" scale="60" xChannelSelector="R" yChannelSelector="G" result="warped"/>
-      <feGaussianBlur in="warped" stdDeviation="6" result="soft"/>
-      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="3" result="grain"/>
-      <feColorMatrix in="grain" type="saturate" values="0" result="grainBW"/>
-      <feComposite in="soft" in2="grainBW" operator="arithmetic" k1="0" k2="1" k3="0.12" k4="-0.06"/>
-    </filter>
-  </svg>
-
-  <header class="masthead">
-    <a href="#top" class="brand">Playforge</a>
-    <nav class="menu" aria-label="Site">
-      <a href="#games">Games</a>
-      <a href="#log">Sketchbook</a>
+  <header class="topbar">
+    <a href="#top" class="logo" aria-label="Playforge home">
+      <svg class="logo-mark" viewBox="0 0 32 32" aria-hidden="true">
+        <path d="M16 2l12 7v14l-12 7-12-7V9z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+        <path d="M13 10.5l9 5.5-9 5.5z" fill="currentColor"/>
+      </svg>
+      <span>Play<b>forge</b></span>
+    </a>
+    <nav class="nav" aria-label="Site">
+      <a href="#games">Library</a>
+      <a href="#log">Patch notes</a>
       <a href="#stream">Stream</a>
     </nav>
     <a class="status" href="#stream" id="live-status">
@@ -40,81 +36,78 @@
 
   <main id="top">
     <!-- HERO -->
-    <section class="hero">
-      <div class="wash wash-a" aria-hidden="true"></div>
-      <div class="wash wash-b" aria-hidden="true"></div>
-      <div class="hero-grid">
-        <p class="eyebrow mono">Browser games · built live on Kick</p>
+    <section class="hero wrap">
+      <div class="hero-copy">
+        <p class="kicker">Browser games · built live on Kick</p>
         <h1 class="display">
-          Games made<br>
-          <em>live,</em> in ink<br>
-          and code.
+          Watch them get built.
+          <span class="glow-text">Then hit play.</span>
         </h1>
-        <div class="hero-side">
-          <p class="lede">
-            Every game here began as a blank file on stream. Chat picks the features,
-            the code gets written on camera, and the finished build lands on this page.
-          </p>
-          <div class="hero-actions">
-            <a href="#games" class="btn btn-ink">Play the games</a>
-            <a href="#stream" class="btn btn-paper">Watch the next build</a>
-          </div>
+        <p class="lede">
+          Every game here began as a blank file on stream. Chat picks the features,
+          the code gets written on camera, and the finished build drops into the library.
+        </p>
+        <div class="hero-actions">
+          <a href="#games" class="btn btn-primary">Browse the library</a>
+          <a href="#stream" class="btn btn-ghost">Watch the next build</a>
         </div>
       </div>
 
-      <dl class="ledger mono" aria-label="Studio stats">
-        <div><dt>Games</dt><dd id="stat-games">0</dd></div>
-        <div><dt>Playable</dt><dd id="stat-playable">0</dd></div>
-        <div><dt>Streams</dt><dd id="stat-streams">0</dd></div>
-        <div><dt>Lines of code</dt><dd id="stat-loc">0</dd></div>
-      </dl>
+      <!-- Featured game, filled in by js/main.js -->
+      <div id="featured"></div>
     </section>
 
-    <!-- GAMES -->
-    <section id="games" class="section">
+    <dl class="hud wrap" aria-label="Studio stats">
+      <div><dt>Games</dt><dd id="stat-games">0</dd></div>
+      <div><dt>Playable</dt><dd id="stat-playable">0</dd></div>
+      <div><dt>Streams</dt><dd id="stat-streams">0</dd></div>
+      <div><dt>Lines of code</dt><dd id="stat-loc">0</dd></div>
+    </dl>
+
+    <!-- LIBRARY -->
+    <section id="games" class="section wrap">
       <header class="section-head">
-        <h2 class="display">The games</h2>
+        <h2 class="display">Game library</h2>
         <div class="filters" role="group" aria-label="Filter games">
           <button class="filter is-active" data-filter="all">All</button>
           <button class="filter" data-filter="playable">Playable</button>
-          <button class="filter" data-filter="sketch">Sketches <small>in progress</small></button>
+          <button class="filter" data-filter="dev">In dev</button>
         </div>
       </header>
       <div id="game-grid" class="cards"></div>
     </section>
 
-    <!-- SKETCHBOOK -->
-    <section id="log" class="section section-log">
+    <!-- PATCH NOTES -->
+    <section id="log" class="section wrap">
       <header class="section-head">
-        <h2 class="display">Sketchbook</h2>
+        <h2 class="display">Patch notes</h2>
         <p class="section-note">What got built, stream by stream.</p>
       </header>
       <ol id="log-list" class="log"></ol>
     </section>
 
     <!-- STREAM -->
-    <section id="stream" class="section section-stream">
-      <div class="wash wash-c" aria-hidden="true"></div>
-      <div class="stream-copy">
-        <p class="eyebrow mono">Live on Kick</p>
-        <h2 class="display">Pull up a chair<br>and <em>watch it happen.</em></h2>
-        <p class="lede">
-          Builds happen live. Suggest a mechanic, name a boss, or call out a bug
-          while it's being written. If it ships, your name goes in the sketchbook.
-        </p>
-        <a href="https://kick.com/" target="_blank" rel="noopener" class="btn btn-ink">Follow on Kick</a>
-      </div>
-      <div class="frame" aria-hidden="true">
-        <div class="frame-inner">
-          <p class="mono frame-text">OFFLINE<br><span>next stream: TBA</span></p>
+    <section id="stream" class="section wrap">
+      <div class="stream">
+        <div class="stream-copy">
+          <p class="kicker">Live on Kick</p>
+          <h2 class="display">Join the lobby. <span class="glow-text">Call the shots.</span></h2>
+          <p class="lede">
+            Builds happen live. Suggest a mechanic, name a boss, or call out a bug
+            while it's being written. If it ships, your name goes in the patch notes.
+          </p>
+          <a href="https://kick.com/" target="_blank" rel="noopener" class="btn btn-primary">Follow on Kick</a>
+        </div>
+        <div class="screen" aria-hidden="true">
+          <p class="screen-text">OFFLINE<br><span>next stream: TBA</span></p>
         </div>
       </div>
     </section>
   </main>
 
-  <footer class="foot">
-    <span class="mono">© <span id="year"></span> Playforge</span>
-    <span class="mono">Made by hand in HTML, CSS, and JavaScript</span>
+  <footer class="foot wrap">
+    <span>© <span id="year"></span> Playforge</span>
+    <span>Made by hand in HTML, CSS, and JavaScript</span>
   </footer>
 
   <script src="js/main.js"></script>
