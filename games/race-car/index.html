@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Race Car · Playforge</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=JetBrains+Mono:wght@400;600&display=swap">
+  <style>
+    :root { color-scheme: light; --paper: #ffffff; --ink: #0a0a0a; --ink-2: #4b4b4b; }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font-family: "JetBrains Mono", Menlo, monospace; display: grid; grid-template-rows: auto 1fr auto; }
+    header, footer { display: flex; flex-wrap: wrap; gap: 8px; justify-content: space-between; align-items: center; padding: 14px 20px; font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-2); }
+    header { border-bottom: 1px solid var(--ink); }
+    footer { border-top: 1px solid var(--ink); }
+    header a { color: var(--ink); text-decoration: none; border-bottom: 1px solid transparent; }
+    header a:hover { border-bottom-color: var(--ink); }
+    main { display: grid; place-items: center; padding: 20px; min-height: 0; }
+    canvas { max-width: 100%; max-height: 100%; aspect-ratio: 2 / 3; background: var(--paper); border: 1px solid var(--ink); touch-action: none; }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="../../index.html">← Back to all games</a>
+    <span>No. 001 · Race Car · sketch</span>
+  </header>
+  <main>
+    <canvas id="game" width="480" height="720"></canvas>
+  </main>
+  <footer>
+    <span>← → or A D to steer</span>
+    <span>Space to start</span>
+  </footer>
+  <script src="game.js"></script>
+</body>
+</html>

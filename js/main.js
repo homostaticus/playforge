@@ -10,11 +10,11 @@
 const GAMES = [
   {
     id: "No. 001",
-    title: "Playforge",
-    description: "The first one. Started as a blank canvas on stream one.",
-    url: "games/playforge/index.html",
+    title: "Race Car",
+    description: "Weave through traffic on a three-lane road. It speeds up the longer you last.",
+    url: "games/race-car/index.html",
     status: "sketch",
-    progress: 5,
+    progress: 20,
     pigment: "madder",
     stack: "Canvas · JS",
   },
@@ -25,7 +25,7 @@ const LOG = [
   {
     date: "2026-10-02",
     title: "First marks on the page.",
-    detail: "Set up the website, the games folder, and the first canvas for Playforge.",
+    detail: "Set up Playforge, the site that will host the games, and started the first one: Race Car.",
     ref: "Stream #1",
   },
 ];
@@ -38,7 +38,7 @@ const grid = document.getElementById("game-grid");
 function renderGames(filter) {
   const list = filter === "all" ? GAMES : GAMES.filter((g) => g.status === filter);
 
-  if (list.length === 0) {
+  if (list.length === 0 && filter !== "all") {
     const what = filter === "playable" ? "No playable games yet." : "No sketches right now.";
     grid.innerHTML = `<div class="card is-empty"><p>${what} Come back after the next stream.</p></div>`;
     return;
@@ -102,7 +102,7 @@ function renderStats() {
   document.getElementById("stat-playable").textContent = GAMES.filter((g) => g.status === "playable").length;
   document.getElementById("stat-streams").textContent = LOG.length;
   // Update by hand after each stream: run `cat games/*/*.js | wc -l`
-  document.getElementById("stat-loc").textContent = 19;
+  document.getElementById("stat-loc").textContent = 228;
 }
 
 function renderLive() {
