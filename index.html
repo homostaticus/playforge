@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Playforge</title>
+  <meta name="description" content="Browser games built live on Kick. Watch them get made, then play them here.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..900,0..100;1,9..144,300..900,0..100&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <a class="skip" href="#games">Skip to games</a>
+
+  <!-- Watercolor filter: turbulence + displacement gives gradients a wet, bleeding edge -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <filter id="wash" x="-30%" y="-30%" width="160%" height="160%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="3" seed="7" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="60" xChannelSelector="R" yChannelSelector="G" result="warped"/>
+      <feGaussianBlur in="warped" stdDeviation="6" result="soft"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="3" result="grain"/>
+      <feColorMatrix in="grain" type="saturate" values="0" result="grainBW"/>
+      <feComposite in="soft" in2="grainBW" operator="arithmetic" k1="0" k2="1" k3="0.12" k4="-0.06"/>
+    </filter>
+  </svg>
+
+  <header class="masthead">
+    <a href="#top" class="brand">Playforge</a>
+    <nav class="menu" aria-label="Site">
+      <a href="#games">Games</a>
+      <a href="#log">Sketchbook</a>
+      <a href="#stream">Stream</a>
+    </nav>
+    <a class="status" href="#stream" id="live-status">
+      <span class="status-dot" aria-hidden="true"></span>
+      <span class="status-text">Offline</span>
+    </a>
+  </header>
+
+  <main id="top">
+    <!-- HERO -->
+    <section class="hero">
+      <div class="wash wash-a" aria-hidden="true"></div>
+      <div class="wash wash-b" aria-hidden="true"></div>
+      <div class="hero-grid">
+        <p class="eyebrow mono">Browser games · built live on Kick</p>
+        <h1 class="display">
+          Games made<br>
+          <em>live,</em> in ink<br>
+          and code.
+        </h1>
+        <div class="hero-side">
+          <p class="lede">
+            Every game here began as a blank file on stream. Chat picks the features,
+            the code gets written on camera, and the finished build lands on this page.
+          </p>
+          <div class="hero-actions">
+            <a href="#games" class="btn btn-ink">Play the games</a>
+            <a href="#stream" class="btn btn-paper">Watch the next build</a>
+          </div>
+        </div>
+      </div>
+
+      <dl class="ledger mono" aria-label="Studio stats">
+        <div><dt>Games</dt><dd id="stat-games">0</dd></div>
+        <div><dt>Playable</dt><dd id="stat-playable">0</dd></div>
+        <div><dt>Streams</dt><dd id="stat-streams">0</dd></div>
+        <div><dt>Lines of code</dt><dd id="stat-loc">0</dd></div>
+      </dl>
+    </section>
+
+    <!-- GAMES -->
+    <section id="games" class="section">
+      <header class="section-head">
+        <h2 class="display">The games</h2>
+        <div class="filters" role="group" aria-label="Filter games">
+          <button class="filter is-active" data-filter="all">All</button>
+          <button class="filter" data-filter="playable">Playable</button>
+          <button class="filter" data-filter="sketch">Sketches <small>in progress</small></button>
+        </div>
+      </header>
+      <div id="game-grid" class="cards"></div>
+    </section>
+
+    <!-- SKETCHBOOK -->
+    <section id="log" class="section section-log">
+      <header class="section-head">
+        <h2 class="display">Sketchbook</h2>
+        <p class="section-note">What got built, stream by stream.</p>
+      </header>
+      <ol id="log-list" class="log"></ol>
+    </section>
+
+    <!-- STREAM -->
+    <section id="stream" class="section section-stream">
+      <div class="wash wash-c" aria-hidden="true"></div>
+      <div class="stream-copy">
+        <p class="eyebrow mono">Live on Kick</p>
+        <h2 class="display">Pull up a chair<br>and <em>watch it happen.</em></h2>
+        <p class="lede">
+          Builds happen live. Suggest a mechanic, name a boss, or call out a bug
+          while it's being written. If it ships, your name goes in the sketchbook.
+        </p>
+        <a href="https://kick.com/" target="_blank" rel="noopener" class="btn btn-ink">Follow on Kick</a>
+      </div>
+      <div class="frame" aria-hidden="true">
+        <div class="frame-inner">
+          <p class="mono frame-text">OFFLINE<br><span>next stream: TBA</span></p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <span class="mono">© <span id="year"></span> Playforge</span>
+    <span class="mono">Made by hand in HTML, CSS, and JavaScript</span>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
